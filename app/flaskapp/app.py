@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request
-from methods import pmc, tss
+from methods.pmc import CalculatePmc
+from methods.helpers import Helpers
+
+pmc = CalculatePmc()
+helpers = Helpers()
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
@@ -12,14 +16,13 @@ def home():
 
 # ATLを算出する
 # @param yesterdayAtl, currentTss
-# TODO パラメータが文字型だった場合の処理を追加する
 #
 @app.route('/atl')
 def get_atl():
     yesterday_atl = request.args.get('yesterdayAtl', '')
     current_tss = request.args.get('currentTss', '')
 
-    if (yesterday_atl == "") or (current_tss == ""):
+    if (yesterday_atl == "") or (current_tss == "") or (not helpers.is_num(yesterday_atl)):
         return jsonify(not_found), 404
 
     data = {
@@ -37,7 +40,8 @@ def get_ctl():
     yesterday_ctl = request.args.get('yesterdayCtl', '')
     current_tss = request.args.get('currentTss', '')
 
-    if (yesterday_ctl == "") or (current_tss == ""):
+    # TODO `isdecimal`の部分を少数に対応させる
+    if (yesterday_ctl == "") or (current_tss == "") or (not helpers.is_num(yesterday_ctl)) or (not helpers.is_num(current_tss)):
         return jsonify(not_found), 404
 
     data = {
@@ -48,5 +52,7 @@ def get_ctl():
     return jsonify(data)
 
 
+    # TODO 日付とTSSから複数日のPMCを返すAPIを作成する
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True, env='development')
