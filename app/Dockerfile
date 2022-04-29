@@ -5,5 +5,8 @@ ENV FLASK_APP=app
 
 COPY ./flaskapp/requirements.txt ./
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN \
+pip install --upgrade pip && \
+pip install -r requirements.txt &&\
+pip install numpy &&\
+pip install werkzeug
