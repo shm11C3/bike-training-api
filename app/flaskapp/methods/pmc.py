@@ -13,7 +13,7 @@ class CalculatePmc:
         if current_tss > 2400 or current_tss < 0:
             return None
 
-        if yesterday_atl > 2400:
+        if yesterday_atl > 2400 or yesterday_atl < 0:
             return None
 
         a = np.exp(-1 / 7)
@@ -27,7 +27,7 @@ class CalculatePmc:
         if current_tss > 2400 or current_tss < 0:
             return None
 
-        if yesterday_ctl > 2400:
+        if yesterday_ctl > 2400 or yesterday_ctl < 0:
             return None
 
 
