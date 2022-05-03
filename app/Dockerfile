@@ -3,10 +3,8 @@ FROM python:3.9.7
 WORKDIR /app
 ENV FLASK_APP=app
 
-COPY ./flaskapp/requirements.txt ./
+COPY ./requirements.txt ./
 
 RUN \
 pip install --upgrade pip && \
-pip install -r requirements.txt &&\
-pip install numpy &&\
-pip install werkzeug
+pip install -r ./requirements.txt
