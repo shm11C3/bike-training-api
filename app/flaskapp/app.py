@@ -1,14 +1,16 @@
 from flask import Flask, jsonify, request
 from methods.pmc import CalculatePmc
 from methods.helpers import Helpers
+import methods.abort
+from validations.pmc import ValidationPmc
 
 pmc = CalculatePmc()
 helpers = Helpers()
+validation = ValidationPmc()
+abort = methods.abort.abort
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
-
-not_found = {"status":404}
 
 @app.route('/')
 def home():
@@ -22,8 +24,8 @@ def get_atl():
     yesterday_atl = request.args.get('yesterdayAtl', '')
     current_tss = request.args.get('currentTss', '')
 
-    if (yesterday_atl == "") or (current_tss == "") or (not helpers.is_num(yesterday_atl)):
-        return jsonify(not_found), 404
+    if validation.yesterday_atl(yesterday_atl) or validation.current_tss(current_tss):
+        return jsonify(abort(400)), 400
 
     data = {
         "status":200,
@@ -40,9 +42,9 @@ def get_ctl():
     yesterday_ctl = request.args.get('yesterdayCtl', '')
     current_tss = request.args.get('currentTss', '')
 
-    # TODO `isdecimal`の部分を少数に対応させる
-    if (yesterday_ctl == "") or (current_tss == "") or (not helpers.is_num(yesterday_ctl)) or (not helpers.is_num(current_tss)):
-        return jsonify(not_found), 404
+    if validation.yesterday_ctl(yesterday_ctl) or validation.current_tss(current_tss):
+        return jsonify(abort(400)), 400
+
 
     data = {
 	    "status":200,
